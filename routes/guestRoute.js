@@ -1,59 +1,69 @@
-const router = require('express').Router()
-const Guest = require('../models/Guest')
+const router = require('express').Router();
+const {
+    addGuest,
+    getAllGuests,
+    getGuestById,
+    updateGuest,
+    deleteGuest
+} = require('../models/guestModel.js'); // Menggunakan fungsi dari guestModel.js
 
-//get
-router.get('/', async (req ,res)=>{
+// GET: Ambil semua tamu
+router.get('/', async (req, res) => {
     try {
-        const data = await Guest.find()
-        res.status(200).json({status : 'success', data : data})
+        const data = await getAllGuests();
+        res.status(200).json({ status: 'success', data });
     } catch (error) {
-        res.status(400).send(error)
+        res.status(400).json({ status: 'error', message: error.message });
     }
-})
+});
 
-//post
-router.post('/', async(req ,res)=>{
-    let guest = new Guest({
-        name : req.body.name,
-        status : req.body.status,
-        note : req.body.note,
-    })
+// GET: Ambil tamu berdasarkan ID
+router.get('/:guestId', async (req, res) => {
     try {
-        const savedData = await guest.save()
-        res.status(200).json({status : 'success', data : savedData})
-    } catch (error) {
-        res.status(400).send(error)
-    }
-
-})
-
-// edit
-router.patch('/:guestId',(req ,res)=>{
-    Guest.updateOne(
-        {_id : req.params.guestId}, 
-        {
-            $set : {
-                status : req.body.status,
-                note : req.body.note,
-            }
+        const data = await getGuestById(req.params.guestId);
+        if (!data) {
+            return res.status(404).json({ status: 'error', message: 'Guest not found' });
         }
-    ).then(data=>{
-        res.status(200).json({status : 'success'})
-    }).catch(err =>{
-        res.status(400).json({message : err})
-    })
-})
-
-// delete datas
-router.delete('/:guestId', async (req,res)=>{
-    try {
-        const data = await Guest.deleteOne({_id : req.params.guestId})
-        res.status(200).json({status : 'success'})
+        res.status(200).json({ status: 'success', data });
     } catch (error) {
-        res.status(400).json({status : 'error',message : error})
+        res.status(400).json({ status: 'error', message: error.message });
     }
-   
-})
+});
 
+// POST: Tambah tamu baru
+router.post('/', async (req, res) => {
+    const { name, status, note } = req.body;
+    try {
+        const savedData = await addGuest(name, status, note);
+        res.status(201).json({ status: 'success', data: savedData });
+    } catch (error) {
+        res.status(400).json({ status: 'error', message: error.message });
+    }
+});
 
-module.exports = router
+// PATCH: Edit tamu berdasarkan ID
+router.patch('/:guestId', async (req, res) => {
+    const { status, note } = req.body;
+    try {
+        const updatedData = await updateGuest(req.params.guestId, status, note);
+        if (!updatedData) {
+            return res.status(404).json({ status: 'error', message: 'Guest not found' });
+        }
+        res.status(200).json({ status: 'success', data: updatedData });
+    } catch (error) {
+        res.status(400).json({ status: 'error', message: error.message });
+    }
+});
+
+// DELETE: Hapus tamu berdasarkan ID
+router.delete('/:guestId', async (req, res) => {
+    console.log(req.params);
+    try {
+        const result = await deleteGuest(req.params.guestId);
+        res.status(200).json({ status: 'success', message: result.message });
+    } catch (error) {
+        res.status(400).json({ status: 'error', message: error.message });
+    }
+});
+
+module.exports = router;

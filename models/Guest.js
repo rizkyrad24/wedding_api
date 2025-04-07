@@ -1,22 +1,22 @@
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 
-let schema = mongoose.Schema({
-    name : {
-        type : String,
-        required : true
-    },
-    status :  {
-        type : String,
-        required : true
-    },
-    note :  {
-        type : String,
-        // required : true
-    },
-    date :  {
-        type : Date,
-        default : Date.now
-    },
-})
+// let schema = mongoose.Schema({
+//     name : {
+//         type : String,
+//         required : true
+//     },
+//     status :  {
+//         type : String,
+//         required : true
+//     },
+//     note :  {
+//         type : String,
+//         // required : true
+//     },
+//     date :  {
+//         type : Date,
+//         default : Date.now
+//     },
+// })
 
-module.exports = mongoose.model('Guest', schema)
+// module.exports = mongoose.model('Guest', schema)
