@@ -13,5 +13,5 @@ const guestRoute = require('./routes/guestRoute');
 app.use('/api', guestRoute);
 
 // Jalankan server
-app.listen(8000, () => console.log('🚀 Running on port 8000'));
+app.listen(2004, () => console.log('🚀 Running on port 2004'));
 
